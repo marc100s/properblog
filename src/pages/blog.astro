@@ -1,0 +1,19 @@
+---
+import { getCollection } from "astro:content";
+import Main from "../components/Main.astro";
+import Layout from "../layouts/Layout.astro";
+import H1 from "../components/H1.astro";
+import PostList from "../components/PostList.astro";
+const posts = await getCollection("posts");
+
+---
+
+<Layout title="Welcome to a blog per Flipar | Un pa de massa">
+	<Main>
+		<H1 text = "Un ritme de farina per flipar" />
+        {posts.map(post => (
+            <PostList posts={posts}/>
+        ))}
+	</Main>
+
+</Layout>
