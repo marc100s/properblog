@@ -1,5 +1,4 @@
 ---
-
 import Header from "../components/Header.astro";
 import { ViewTransitions } from 'astro:transitions';
 
@@ -7,25 +6,58 @@ interface Props {
 	title: string;
 	description?: string;
 	image?: string;
+    // Add a type prop to distinguish between a general 'website' and a blog 'article' for SEO
+    type?: 'website' | 'article';
 }
 
-const { title, description = "Una comunitat per flipar amb el pa" , image = "./images/band.jpg" } = Astro.props;
+// Set default values for props
+const { 
+    title, 
+    description = "Una comunitat per flipar amb el pa", 
+    image = "/images/band.jpg", // Use a root-relative path for the default image
+    type = 'website'
+} = Astro.props;
 
+// --- SEO Variable Setup ---
+// Create a canonical URL to tell search engines the "official" page URL
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+// Create a full, absolute URL for the social media share image
+// Social media crawlers need a complete URL (e.g., https://your.site/image.jpg)
+const absoluteImageURL = new URL(image, Astro.site);
 ---
-
 <!doctype html>
-<html lang="en">
+<html lang="ca"> {/* Added 'ca' for Catalan, adjust if needed */}
 	<head>
+		{/* <!-- Basic Meta Tags --> */}
 		<meta charset="UTF-8" />
-		<meta name="description" content={description} />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
-		<meta property="og:type" content={image} />
-		<ViewTransitions />
+		
+		{/* <!-- SEO & Title --> */}
 		<title>{title}</title>
+		<meta name="description" content={description} />
+		<link rel="canonical" href={canonicalURL} />
+
+		{/* <!-- Open Graph (for Facebook, Pinterest, etc.) --> */}
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonicalURL} />
+		<meta property="og:image" content={absoluteImageURL} />
+		<meta property="og:type" content={type} />
+		<meta property="og:site_name" content="Flipa" /> {/* Add your site's name */}
+
+		{/* <!-- Twitter Card (for Twitter/X) --> */}
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={absoluteImageURL} />
+		
+        {/* View Transitions for smooth page navigation */}
+		<ViewTransitions />
 	</head>
-	<body class="min-h-screen">
+	<body class="min-h-screen bg-gray-50 text-gray-900">
 		<Header />
 		<slot />
 	</body>

@@ -4,16 +4,23 @@ import Main from "../components/Main.astro";
 import Layout from "../layouts/Layout.astro";
 import H1 from "../components/H1.astro";
 import PostList from "../components/PostList.astro";
-const posts = await getCollection("posts");
 
+// 1. Fetch all posts from the "posts" collection
+const allPosts = await getCollection("posts");
+
+// 2. Sort the posts by publication date, from newest to oldest.
+// This is essential for a blog's main page.
+const sortedPosts = allPosts.sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf());
 ---
+<Layout title="Un pa de massa per Flipar | El Blog">
+    <Main>
+        <H1 text="Un ritme de farina per flipar" />
+        
+        {/* FIX: Render the PostList component only ONCE.
+          Pass the entire `sortedPosts` array to it as a prop.
+          This fixes the bug where the list was being rendered for every post.
+        */}
+        <PostList posts={sortedPosts} />
 
-<Layout title="Welcome to a blog per Flipar | Un pa de massa">
-	<Main>
-		<H1 text = "Un ritme de farina per flipar" />
-        {posts.map(post => (
-            <PostList posts={posts}/>
-        ))}
-	</Main>
-
+    </Main>
 </Layout>
